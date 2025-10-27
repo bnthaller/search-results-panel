@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>EDMS Search Widget Mockup</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/table.css"/>
+  <link rel="stylesheet" href="css/filters.css"/>
+</head>
+<body>
+  <div class="widget">
+    <div class="banner">
+      <div class="banner-text">////EDMS Search Results for "Corporate"</div>
+    </div>
+
+    <div class="content">
+      <div class="controls">
+        <!-- Search Field -->
+        <div class="search-field" id="edmsSearchField">
+          <input id="searchInput" class="search-input" type="text" autocomplete="off" aria-labelledby="searchLabel">
+          <label id="searchLabel" class="floating-label">Search EDMS from here</label>
+          <button class="search-button" id="searchButton" aria-label="Search">
+            <img src="img/glass.png" alt="Search Icon">
+          </button>
+          <button class="clear-button" id="clearButton" aria-label="Clear search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#FF5722" d="M18.3 5.7a1 1 0 0 0-1.4 0L12 10.59 7.1 5.7a1 1 0 1 0-1.4 1.4L10.59 12l-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.41 12l4.89-4.9a1 1 0 0 0 0-1.4Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Checkbox group -->
+        <div class="checkbox-group">
+          <label class="checkbox-label" for="filesOnly">
+            <input id="filesOnly" type="checkbox" checked />
+            <span class="checkbox-box" aria-hidden="true"></span>
+            <span>Files Only</span>
+          </label>
+
+          <label class="checkbox-label" for="advancedSearch">
+            <input id="advancedSearch" type="checkbox" />
+            <span class="checkbox-box" aria-hidden="true"></span>
+            <span>Advanced Search</span>
+          </label>
+
+          <!-- Filters toggle -->
+          <label class="checkbox-label" for="filtersToggle">
+            <input id="filtersToggle" type="checkbox" />
+            <span class="checkbox-box" aria-hidden="true"></span>
+            <span>Filters</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Advanced Search Panel -->
+      <div id="advancedPanel" class="advanced-panel" aria-hidden="true">
+        <div class="advanced-row">
+          <div class="field field-operand" id="fieldOperand">
+            <label class="label" for="operandSelect">Operand</label>
+            <select id="operandSelect">
+              <option value="" selected hidden></option>
+              <option value="and">and</option>
+              <option value="or">or</option>
+            </select>
+          </div>
+
+          <div class="field field-metadata" id="fieldMetadata">
+            <label class="label" for="metadataSelect">Search Metadata Fields</label>
+            <select id="metadataSelect">
+              <option value="" selected hidden></option>
+              <!-- (trimmed list; this is only for advanced search mock control) -->
+              <option>Allocated CI</option>
+              <option>Annex 3 RCCD</option>
+              <option>Annex 4 Change Request 521</option>
+              <option>Annex 4 Change Request 523</option>
+              <option>Annex 4 Change Request 525</option>
+              <option>Annex 4 Change Request 526</option>
+              <option>Annex 4 Change Request 527</option>
+              <option>Approval Policy</option>
+              <option>Approver</option>
+              <option>CDRL Sequence Number</option>
+              <option>Document Category</option>
+              <option>Document Type</option>
+              <option>Last Modified By</option>
+              <option>Title</option>
+              <option>Version</option>
+            </select>
+          </div>
+
+          <div class="field field-value" id="fieldValue">
+            <label class="label" for="valueInput">Enter Value</label>
+            <input id="valueInput" type="text" autocomplete="off" />
+            <button class="value-clear-button" id="valueClearButton" aria-label="Clear value" title="Clear"> 
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#FF5722" d="M18.3 5.7a1 1 0 0 0-1.4 0L12 10.59 7.1 5.7a1 1 0 1 0-1.4 1.4L10.59 12l-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.41 12l4.89-4.9a1 1 0 0 0 0-1.4Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="advanced-actions">
+            <button id="resetFieldsBtn" class="btn-reset" type="button">Reset Fields</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS PANEL -->
+      <div id="resultsPanel" class="results-panel" role="region" aria-label="Search Results">
+        <!-- Sticky toolbar -->
+        <div class="results-toolbar" role="group" aria-label="Results controls">
+          <div class="toolbar-left">
+            <span id="resultsCount" aria-live="off">Showing 0 of 0 results</span>
+            <span id="resultsLive" class="visually-hidden" aria-live="polite"></span>
+          </div>
+          <div class="toolbar-right">
+            <label for="sortSelect" class="toolbar-sort-label">Sort by:</label>
+            <select id="sortSelect" class="toolbar-sort-select" aria-label="Sort results">
+              <option value="relevance">Relevance</option>
+              <option value="modified_desc" selected>Last Modified (newest)</option>
+              <option value="modified_asc">Last Modified (oldest)</option>
+              <option value="title_asc">Title (A–Z)</option>
+              <option value="title_desc">Title (Z–A)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Grid: panel + table -->
+        <div id="resultsGrid" class="results-grid side-left">
+          <!-- Filters panel -->
+          <aside id="filtersPanel" class="filters-panel" aria-labelledby="filtersTitle" aria-hidden="true">
+            <div class="filters-header">
+              <h2 id="filtersTitle">Filters</h2>
+              <button id="filtersSideToggle" class="filters-side-toggle" aria-label="Dock panel to right" title="Dock panel">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14.7 6.3a1 1 0 0 1 0 1.4L11.41 11H19a1 1 0 1 1 0 2h-7.59l3.29 3.29a1 1 0 1 1-1.41 1.41l-5-5a1 1 0 0 1 0-1.41l5-5a1 1 0 0 1 1.41 0Z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="filters-body">
+              <!-- FILE EXTENSIONS -->
+              <section class="filter-group">
+                <button class="filter-group-toggle" type="button"
+                        aria-expanded="false" aria-controls="groupExtBody" id="groupExtHeader">
+                  <span>By File Extension</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" class="chevron">
+                    <path d="M8.12 9.29a1 1 0 0 1 1.41 0L12 11.76l2.47-2.47a1 1 0 1 1 1.41 1.42l-3.18 3.18a1.5 1.5 0 0 1-2.12 0L8.12 10.7a1 1 0 0 1 0-1.41z"/>
+                  </svg>
+                </button>
+                <div id="groupExtBody" class="filter-group-body" hidden>
+                  <div class="filter-field">
+                    <label for="filterExtType">Extension Types</label>
+                    <select id="filterExtType">
+                      <option value="all" selected>All</option>
+                      <option value="office">Office</option>
+                      <option value="pdf">PDF</option>
+                      <option value="images">Images</option>
+                      <option value="text">Text</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="filter-field">
+                    <label for="filterExtSpecific">Specific Extension</label>
+                    <select id="filterExtSpecific">
+                      <option value="all" selected>All</option>
+                      <option value="doc">.doc/.docx</option>
+                      <option value="xls">.xls/.xlsx</option>
+                      <option value="ppt">.ppt/.pptx</option>
+                      <option value="txt">.txt</option>
+                      <option value="jpg">.jpg/.jpeg</option>
+                      <option value="png">.png</option>
+                      <option value="folder">Folders</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+
+              <!-- BY DATE -->
+              <section class="filter-group">
+                <button class="filter-group-toggle" type="button"
+                        aria-expanded="false" aria-controls="groupDateBody" id="groupDateHeader">
+                  <span>By Date</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" class="chevron">
+                    <path d="M8.12 9.29a1 1 0 0 1 1.41 0L12 11.76l2.47-2.47a1 1 0 1 1 1.41 1.42l-3.18 3.18a1.5 1.5 0 0 1-2.12 0L8.12 10.7a1 1 0 0 1 0-1.41z"/>
+                  </svg>
+                </button>
+                <div id="groupDateBody" class="filter-group-body" hidden>
+                  <div class="filter-field">
+                    <label for="filterDateColumn">By this column</label>
+                    <select id="filterDateColumn">
+                      <option value="modified" selected>Modified</option>
+                      <option value="created">Created</option>
+                      <option value="expiration">Expiration</option>
+                    </select>
+                  </div>
+                  <div class="filter-row-two">
+                    <div class="filter-field">
+                      <label for="filterStart">Start Date</label>
+                      <input id="filterStart" type="date"/>
+                    </div>
+                    <div class="filter-field">
+                      <label for="filterEnd">End Date</label>
+                      <input id="filterEnd" type="date"/>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- BY METADATA -->
+              <section class="filter-group">
+                <button class="filter-group-toggle" type="button"
+                        aria-expanded="false" aria-controls="groupMetaBody" id="groupMetaHeader">
+                  <span>By Metadata</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" class="chevron">
+                    <path d="M8.12 9.29a1 1 0 0 1 1.41 0L12 11.76l2.47-2.47a1 1 0 1 1 1.41 1.42l-3.18 3.18a1.5 1.5 0 0 1-2.12 0L8.12 10.7a1 1 0 0 1 0-1.41z"/>
+                  </svg>
+                </button>
+                <div id="groupMetaBody" class="filter-group-body" hidden>
+                  <div class="filter-field">
+                    <label for="filterMetaField">Metadata Field</label>
+                    <select id="filterMetaField">
+                      <option value="any" selected>Any</option>
+                      <option>Actions</option>
+                      <option>Affected Items</option>
+                      <option>Allocated CI</option>
+                      <option>Annex 3 RCCD</option>
+                      <option>Annex 4 Change Request 521</option>
+                      <option>Annex 4 Change Request 523</option>
+                      <option>Annex 4 Change Request 525</option>
+                      <option>Annex 4 Change Request 526</option>
+                      <option>Annex 4 Change Request 527</option>
+                      <option>Approval Policy</option>
+                      <option>Approver</option>
+                      <option>CDRL Seq Num Controlled</option>
+                      <option>CDRL Sequence Number</option>
+                      <option>CI Manager</option>
+                      <option>CI Status</option>
+                      <option>CR Coordinator</option>
+                      <option>Change Request Status</option>
+                      <option>Configuration Item</option>
+                      <option>Contract Number</option>
+                      <option>Control Number</option>
+                      <option>Corporate DAL</option>
+                      <option>Course Title</option>
+                      <option>Created By</option>
+                      <option>DUNS</option>
+                      <option>Data/Media Location</option>
+                      <option>Doc Release Status</option>
+                      <option>Doc Workflow Status</option>
+                      <option>Document Category</option>
+                      <option>Document Handling Statement</option>
+                      <option>Document Number</option>
+                      <option>Document State</option>
+                      <option>Document Type</option>
+                      <option>Drawing</option>
+                      <option>Drawing Number</option>
+                      <option>Duration #</option>
+                      <option>Employee Can Self Enroll</option>
+                      <option>File Name</option>
+                      <option>Frequency</option>
+                      <option>Information Handling Type</option>
+                      <option>Item Number</option>
+                      <option>Item Type</option>
+                      <option>Last Modified By</option>
+                      <option>Lead Organization</option>
+                      <option>Learning Code</option>
+                      <option>LiveLink Id</option>
+                      <option>Mandatory</option>
+                      <option>NFE</option>
+                      <option>Owned By</option>
+                      <option>Owner</option>
+                      <option>Project</option>
+                      <option>Proprietary</option>
+                      <option>Provider</option>
+                      <option>Release</option>
+                      <option>Review Schedule</option>
+                      <option>Reviewers</option>
+                      <option>Revision Identifier</option>
+                      <option>Size</option>
+                      <option>Software Title</option>
+                      <option>State</option>
+                      <option>System Name</option>
+                      <option>TDL Number</option>
+                      <option>TRL Index</option>
+                      <option>Tech POC</option>
+                      <option>Title</option>
+                      <option>Training Type</option>
+                      <option>Vendor Name</option>
+                      <option>Version</option>
+                      <option>Virtual Folder Type</option>
+                    </select>
+                  </div>
+                  <div class="filter-field">
+                    <label for="filterMetaValue">Metadata Value</label>
+                    <select id="filterMetaValue"></select>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="filters-footer">
+              <button id="clearFiltersBtn" class="btn-clear-filters" type="button">Clear Filters</button>
+            </div>
+          </aside>
+
+          <!-- Results table -->
+          <div id="resultsTableWrap" class="results-table-wrap">
+            <table class="results-table" aria-label="Results Table">
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS (order matters) -->
+  <script src="js/data.mock.js"></script>
+  <script src="js/utils.date.js"></script>
+  <script src="js/utils.score.js"></script>
+  <script src="js/render.icons.js"></script>
+  <script src="js/render.rows.js"></script>
+  <script src="js/state.filters.js"></script>
+  <script src="js/state.metadata.js"></script>
+  <script src="js/state.sort.js"></script>
+  <script src="js/ui.search.js"></script>
+  <script src="js/ui.advanced.js"></script>
+  <script src="js/ui.filters.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
